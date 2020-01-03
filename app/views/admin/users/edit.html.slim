@@ -1,0 +1,6 @@
+h1 ユーザーの編集
+
+.nav.justify-content-end
+  = link_to '一覧', admin_users_path, class: 'nav-link'
+
+= render partial: 'form', locals: { user: @user }
