@@ -12,10 +12,15 @@ ja:
     attributes:
       task:
         id: ID
-        name: 種目
-        description: 内容
+        name: トレーニング名
+        description: メモ
+        image: 画像
         created_at: 登録日時
         updated_at: 更新日時
+        activity_at: 実施日
+        weight: 重量
+        lep: 回数
+        set: セット数
       user:
         name: 名前
         email: メールアドレス
@@ -218,7 +223,7 @@ ja:
   time:
     am: 午前
     formats:
-      default: "%Y年%m月%d日(%a) %H時%M分%S秒 %z"
+      default: "%Y年%m月%d日(%a) %H時%M分"
       long: "%Y/%m/%d %H:%M"
       short: "%m/%d %H:%M"
     pm: 午後

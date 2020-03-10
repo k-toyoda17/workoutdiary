@@ -7,19 +7,22 @@ html
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-  body
-    .app-title.navbar.navbar-expand-md.navbar-light.bg-light
-      .navbar-brand WorkoutDiary
-
+  body data-turbolinks="false"
+    .app-title.navbar.navbar-expand-md.navbar-dark.bg-primary.mb-4
+      .navbar-brand= link_to 'WorkoutDiary', tasks_path, class: 'navbar-brand'
       ul.navbar-nav.ml-auto
-        - if current_user
-          li.nav-item= link_to 'ワークアウト一覧', tasks_path, class: 'nav-link'
-          - if current_user.admin?
-            li.nav-item= link_to 'ユーザー一覧', admin_users_path, class: 'nav-link'
-          li.nav-item= link_to 'ログアウト', logout_path, method: :delete, class: 'nav-link'
-        - else
-          li.nav-item= link_to 'ログイン', login_path, class: 'nav-link'
-    .container
+          li.nav-item= link_to current_user.name, admin_user_path(current_user.id), class: 'nav-link' if current_user
+          li.nav-item= link_to 'トレーニング一覧', tasks_path, class: 'nav-link'
+          li.nav-item= link_to '新規登録', new_admin_user_path, class: 'nav-link' unless current_user
+          li.nav-item= link_to 'ユーザー一覧', admin_users_path, class: 'nav-link' if current_user&.admin?
+          - if current_user
+            li.nav-item= link_to 'ログアウト', logout_path, method: :delete, class: 'nav-link'
+          - else
+            li.nav-item= link_to 'ログイン', login_path, class: 'nav-link'
+    .container.wrapper
       - if flash.notice.present?
         .alert.alert-success= flash.notice
       = yield
+    footer.footer.mt-5
+      .container.text-center.mb-4
+        |  Created by KAZUKI TOYODA

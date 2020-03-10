@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   helper_method :current_user
-  before_action :login_required
+  include SessionsHelper
 
   private
 
@@ -9,6 +9,6 @@ class ApplicationController < ActionController::Base
   end
 
   def login_required
-    redirect_to login_path unless current_user
+    redirect_to login_path, notice: 'ログインが必要です。' unless current_user
   end
 end

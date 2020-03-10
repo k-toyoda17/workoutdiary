@@ -1,24 +1,24 @@
-h1 ワークアウトの詳細
+h1.mb-4 トレーニング詳細
 
 .nav.justify-content-end
   = link_to '一覧', tasks_path, class: 'nav-link'
 table.table.table-hover
   tbody
     tr
-      th= Task.human_attribute_name(:id)
-      td= @task.id
-    tr
       th= Task.human_attribute_name(:name)
       td= @task.name
+    tr
+      th= Task.human_attribute_name(:activity_at)
+      td= l @task.activity_at
+    tr
+      th= '記録'
+      td= "#{@task.weight}kg #{@task.lep}回 #{@task.set}セット" if @task.weight
     tr
       th= Task.human_attribute_name(:description)
       td= auto_link(simple_format(h(@task.description), {}, sanitize: false, wrapper_tag: "div"))
     tr
-      th= Task.human_attribute_name(:created_at)
-      td= @task.created_at
-    tr
-      th= Task.human_attribute_name(:updated_at)
-      td= @task.updated_at
+      th= Task.human_attribute_name(:image)
+      td= image_tag @task.image if @task.image.attached?
 
-= link_to '編集', edit_task_path, class: 'btn btn-primary mr-3'
-= link_to '削除', @task, method: :delete, data: { confirm: "ワークアウト「#{@task.name}」を削除します。よろしいですか？" }, class: 'btn btn-danger'
+- if current_user&.admin? || current_user
+  = link_to '編集', edit_task_path, class: 'btn btn-primary mr-3'

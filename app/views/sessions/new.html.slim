@@ -1,5 +1,7 @@
-h1 ログイン
+h1.mb-4 ログイン
 
+- if @error_message
+  .alert.alert-danger= @error_message
 = form_with scope: :session, local: true do |f|
   .form-group
     = f.label :email, 'メールアドレス'

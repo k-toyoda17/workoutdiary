@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'ワークアウト管理機能', type: :system do
   # ユーザーA,Bを作成しておく
-  let(:user_a) { FactoryBot.create(:user, name: 'ユーザーA', email: 'a@example.com') }
+  let(:user_a) { FactoryBot.create(:user, name: 'ユーザーA', email: 'a@example.com', admin: true) }
   let(:user_b) { FactoryBot.create(:user, name: 'ユーザーB', email: 'b@example.com') }
   # 作成者がユーザーAであるワークアウトを作成しておく
   let!(:task_a) { FactoryBot.create(:task, name: '最初のワークアウト', user: user_a) }

@@ -1,19 +1,38 @@
-h1 ワークアウト一覧
+h1.mb-4 トレーニング一覧
 
-= link_to '新規登録', new_task_path, class: 'btn btn-primary'
+= search_form_for @q, class: 'mb-5' do |f|
+  .form-group.row
+    = f.label :name_cont, 'トレーニング名', class: 'col-sm-2 col-form-label'
+    .col-sm-10
+      = f.search_field :name_cont, class: 'form-control', placeholder: 'トレーニング名を入力してください'
+  .form-group.row
+    = f.label :activity_at_gteq, '実施日', class: 'col-sm-2 col-form-label'
+    .col-sm-10
+      = f.search_field :activity_at_gteq, class: 'form-control', placeholder: '例: 2020-01-01 00:00'
+  .form-group
+    = f.submit class: 'btn btn-outline-primary'
+
+- if current_user
+  = link_to '新規登録', new_task_path, class: 'btn btn-primary mb-3'
 
 .mb-3
+  = paginate @tasks
+  = page_entries_info @tasks, entry_name: 'トレーニング'
+
 table.table.table-hover
   thead.thead-default
     tr
-      th= Task.human_attribute_name(:name)
-      th= Task.human_attribute_name(:created_at)
+      th= sort_link(@q, :name, [:name, "activity_at desc"])
+      th= Task.human_attribute_name(:activity_at)
       th
   tbody
     - @tasks.each do |task|
-      tr
+      tr id="task-#{task.id}"
         td= link_to task.name, task
-        td= task.created_at
-        td
-          = link_to '編集', edit_task_path(task), class: 'btn btn-primary mr-3'
-          = link_to '削除', task, method: :delete, data: { confirm: "ワークアウト「#{task.name}」を削除します。よろしいですか？" }, class: 'btn btn-danger'
+        td= l task.activity_at
+        - if current_user&.admin? || current_user
+          td
+            = link_to '編集', edit_task_path(task), class: 'btn btn-primary mr-3'
+            = link_to '削除', task, method: :delete, remote: true, data: { confirm: "トレーニング「#{task.name}」を削除します。よろしいですか？" }, class: 'btn btn-danger delete'
+
+#calendar

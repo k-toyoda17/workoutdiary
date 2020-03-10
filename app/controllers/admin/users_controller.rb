@@ -1,5 +1,7 @@
 class Admin::UsersController < ApplicationController
-  before_action :require_admin
+  before_action :login_required, except: [:new, :create]
+  before_action :admin_login_required, only: [:index, :destroy]
+  before_action :correct_user, only: [:edit, :update]
 
   def index
     @users = User.all
@@ -21,7 +23,12 @@ class Admin::UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      redirect_to admin_user_path(@user), notice: "ユーザー「#{@user.name}」を登録しました。"
+      if current_user&.admin? || current_user
+        redirect_to admin_user_path(@user), notice: "ユーザー「#{@user.name}」を登録しました。"
+      else
+        log_in @user
+        redirect_to root_path, notice: "ユーザー「#{@user.name}」を登録しました。"
+      end
     else
       render :new
     end
@@ -46,10 +53,15 @@ class Admin::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :admin, :password, :password_confirmation)
+    params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
 
-  def require_admin
-    redirect_to root_path unless current_user.admin?
+  def admin_login_required
+    redirect_to tasks_path, notice: '権限がありません。' unless current_user.admin?
+  end
+
+  def correct_user
+    @user = User.find(params[:id])
+    redirect_to root_path, notice: '権限がありません。' unless @user == current_user
   end
 end

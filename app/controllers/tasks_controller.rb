@@ -1,8 +1,10 @@
 class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :login_required, only: [:create, :edit, :update, :destroy]
 
   def index
-    @tasks = current_user.tasks.order(created_at: :desc)
+    @q = Task.all.ransack(params[:q])
+    @tasks = @q.result(distinct: true).page(params[:page]).recent.per(10)
   end
 
   def show
@@ -17,41 +19,30 @@ class TasksController < ApplicationController
 
   def update
     @task.update!(task_params)
-    redirect_to tasks_url, notice: "ワークアウト「#{@task.name}」を更新しました。"
+    redirect_to tasks_url, notice: "トレーニング「#{@task.name}」を更新しました。"
   end
 
   def destroy
     @task.destroy
-    redirect_to tasks_url, notice: "ワークアウト「#{@task.name}」を削除しました。"
   end
 
   def create
     @task = current_user.tasks.new(task_params)
 
-    if params[:back].present?
-      render :new
-      return
-    end
-
     if @task.save
-      redirect_to @task, notice: "種目 「#{@task.name}」を登録しました。"
+      redirect_to @task, notice: "トレーニング 「#{@task.name}」を登録しました。"
     else
       render :new
     end
   end
 
-  def confirm_new
-    @task = current_user.tasks.new(task_params)
-    render :new unless @task.valid?
-  end
-
   private
 
   def task_params
-    params.require(:task).permit(:name, :description)
+    params.require(:task).permit(:name, :activity_at, :weight, :lep, :set, :description, :image)
   end
 
   def set_task
-    @task = current_user.tasks.find(params[:id])
+    @task = Task.find(params[:id])
   end
 end

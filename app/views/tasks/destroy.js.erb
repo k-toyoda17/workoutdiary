@@ -1,0 +1,5 @@
+document.querySelector("#task-<%= @task.id %>").style.display = 'none';
+
+var message = document.createElement('p');
+message.innerText = 'トレーニング「<%= @task.name %>」を削除しました。残りのトレーニングは<%= Task.count %>件です。';
+document.querySelector('table').insertAdjacentElement('beforebegin', message);

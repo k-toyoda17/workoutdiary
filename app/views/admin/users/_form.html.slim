@@ -10,10 +10,6 @@
   .form-group
     = f.label :email, 'メールアドレス'
     = f.text_field :email, class: 'form-control'
-  .form-check
-    = f.label :admin, class: 'form-check-label' do
-     = f.check_box :admin, class: 'form-check-input'
-     | 管理者権限
   .form-group
     = f.label :password, 'パスワード'
     = f.password_field :password, class: 'form-control'

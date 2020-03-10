@@ -1,4 +1,4 @@
-h1 ユーザー一覧
+h1.mb-4 ユーザー一覧
 
 = link_to '新規登録', new_admin_user_path, class: 'btn btn-primary'
 
@@ -20,6 +20,6 @@ table.table.table-hover
         td= user.admin? ? 'あり' : 'なし'
         td= user.created_at
         td= user.updated_at
-        td
-          = link_to '編集', edit_admin_user_path(user), class: 'btn btn-primary mr-3'
-          = link_to '削除', [:admin, user], method: :delete, data: { confirm: "ユーザー「#{user.name}」を削除します。よろしいですか？" }, class: 'btn btn-danger'
+        - if current_user.admin? && !current_user?(user)
+          td
+            = link_to '削除', [:admin, user], method: :delete, data: { confirm: "ユーザー「#{user.name}」を削除します。よろしいですか？" }, class: 'btn btn-danger'

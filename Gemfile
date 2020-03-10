@@ -66,3 +66,10 @@ gem 'slim-rails'
 gem 'html2slim'
 gem 'bootstrap'
 gem 'rails_autolink'
+gem 'ransack'
+gem 'kaminari'
+gem 'jquery-rails'
+gem 'fullcalendar-rails'
+gem 'momentjs-rails'
+gem "bootstrap4-datetime-picker-rails"
+gem "font-awesome-rails"
