@@ -1,6 +1,11 @@
 h1.mb-4 ユーザー一覧
 
-= link_to '新規登録', new_admin_user_path, class: 'btn btn-primary'
+= link_to '新規登録', new_admin_user_path, class: 'btn btn-primary mb-3'
+= link_to 'CSVエクスポート', admin_users_path(format: :csv), class: 'btn btn-primary ml-3 mb-3'
+
+= form_tag import_admin_users_path, multipart: true, class: 'mb-3' do
+ = file_field_tag :file
+ = submit_tag "CSVインポート", class: 'btn btn-primary'
 
 .mb-3
 table.table.table-hover
