@@ -5,6 +5,11 @@ class Admin::UsersController < ApplicationController
 
   def index
     @users = User.all
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @users.generate_csv, filename: "users-#{Time.zone.now.strftime('%Y%m%d%S')}.csv"}
+    end
   end
 
   def show
@@ -48,6 +53,11 @@ class Admin::UsersController < ApplicationController
     @user = User.find(params[:id])
     @user.destroy
     redirect_to admin_users_url, notice: "ユーザー「#{@user.name}」を削除しました。"
+  end
+
+  def import
+    User.import(params[:file])
+    redirect_to admin_users_url, notice: "ユーザーを追加しました。"
   end
 
   private
