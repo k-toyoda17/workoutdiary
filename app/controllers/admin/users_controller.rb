@@ -4,7 +4,8 @@ class Admin::UsersController < ApplicationController
   before_action :correct_user, only: [:edit, :update]
 
   def index
-    @users = User.all
+    @q = User.ransack(params[:q])
+    @users = @q.result(distinct: true).page(params[:page]).per(15).recent
 
     respond_to do |format|
       format.html

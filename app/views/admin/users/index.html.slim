@@ -1,5 +1,17 @@
 h1.mb-4 ユーザー一覧
 
+= search_form_for [:admin, @q], class: 'mb-5' do |f|
+  .form-group.row
+    = f.label :name_cont, 'ユーザー名', class: 'col-sm-2 col-form-label'
+    .col-sm-10
+      = f.search_field :name_cont, class: 'form-control', placeholder: 'ユーザー名を入力してください'
+  .form-group.row
+    = f.label :created_at_gteq, '登録日時', class: 'col-sm-2 col-form-label'
+    .col-sm-10
+      = f.search_field :created_at_gteq, class: 'form-control', placeholder: '例: 2020-01-01 00:00'
+  .form-group
+    = f.submit class: 'btn btn-outline-primary'
+
 = link_to '新規登録', new_admin_user_path, class: 'btn btn-primary mb-3'
 = link_to 'CSVエクスポート', admin_users_path(format: :csv), class: 'btn btn-primary ml-3 mb-3'
 
@@ -8,9 +20,14 @@ h1.mb-4 ユーザー一覧
  = submit_tag "CSVインポート", class: 'btn btn-primary'
 
 .mb-3
+  = paginate @users
+  = page_entries_info @users, entry_name: 'ユーザー'
+
+.mb-3
 table.table.table-hover
   thead.thead-default
     tr
+      th= sort_link([:admin, @q], :name, [:name, "created_at desc"])
       th= User.human_attribute_name(:name)
       th= User.human_attribute_name(:email)
       th= User.human_attribute_name(:admin)

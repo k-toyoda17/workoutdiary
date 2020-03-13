@@ -3,6 +3,7 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
   has_many :tasks
+  scope :recent, -> { order(:created_at) }
 
   def self.csv_attributes
     ["name", "email", "password_digest", "created_at", "updated_at"]

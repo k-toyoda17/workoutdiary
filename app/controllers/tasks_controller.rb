@@ -3,8 +3,13 @@ class TasksController < ApplicationController
   before_action :login_required, only: [:create, :edit, :update, :destroy]
 
   def index
-    @q = Task.all.ransack(params[:q])
-    @tasks = @q.result(distinct: true).page(params[:page]).recent.per(10)
+    if current_user
+      @q = current_user.tasks.ransack(params[:q])
+      @tasks = @q.result(distinct: true).page(params[:page]).recent.per(10)
+    else
+      @q = Task.all.ransack(params[:q])
+      @tasks = @q.result(distinct: true).page(params[:page]).recent.per(10)
+    end
   end
 
   def show
