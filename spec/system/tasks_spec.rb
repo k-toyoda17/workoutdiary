@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe 'ワークアウト管理機能', type: :system do
+describe 'トレーニング管理機能', type: :system do
   # ユーザーA,Bを作成しておく
-  let(:user_a) { FactoryBot.create(:user, name: 'ユーザーA', email: 'a@example.com', admin: true) }
-  let(:user_b) { FactoryBot.create(:user, name: 'ユーザーB', email: 'b@example.com') }
-  # 作成者がユーザーAであるワークアウトを作成しておく
-  let!(:task_a) { FactoryBot.create(:task, name: '最初のワークアウト', user: user_a) }
+  let(:user_a) { create(:user, name: 'ユーザーA', email: 'a@example.com', admin: true) }
+  let(:user_b) { create(:user, name: 'ユーザーB', email: 'b@example.com') }
+  # 作成者がユーザーAであるトレーニングを作成しておく
+  let!(:task_a) { create(:task, name: '最初のトレーニング', user: user_a) }
 
   before do
     # ログインの共通処理
@@ -15,9 +15,9 @@ describe 'ワークアウト管理機能', type: :system do
     click_button 'ログインする' # ログインボタンを押下する
   end
 
-  # 作成済みのワークアウトの名称が画面上に表示されていることを確認
-  shared_examples_for 'ユーザーAが作成したワークアウトが表示される' do
-    it { expect(page).to have_content '最初のワークアウト' }
+  # 作成済みのトレーニングの名称が画面上に表示されていることを確認
+  shared_examples_for 'ユーザーAが作成したトレーニングが表示される' do
+    it { expect(page).to have_content '最初のトレーニング' }
   end
 
   describe '一覧表示機能' do
@@ -25,16 +25,16 @@ describe 'ワークアウト管理機能', type: :system do
       # ユーザーAでログインする
       let(:login_user) { user_a }
 
-      it_behaves_like 'ユーザーAが作成したワークアウトが表示される'
+      it_behaves_like 'ユーザーAが作成したトレーニングが表示される'
     end
 
     context 'ユーザーBがログインしているとき' do
       # ユーザーBでログインする
       let(:login_user) { user_b }
 
-      it 'ユーザーAが作成したワークアウトが表示されない' do
-        # ユーザーAが作成したワークアウトの名称が画面上に表示されていないことを確認
-        expect(page).to have_no_content '最初のワークアウト'
+      it 'ユーザーAが作成したトレーニングが表示されない' do
+        # ユーザーAが作成したトレーニングの名称が画面上に表示されていないことを確認
+        expect(page).to have_no_content '最初のトレーニング'
       end
     end
   end
@@ -44,12 +44,12 @@ describe 'ワークアウト管理機能', type: :system do
       # ユーザーAでログインする
       let(:login_user) { user_a }
 
-      # ワークアウトの詳細ページへアクセスする
+      # トレーニングの詳細ページへアクセスする
       before do
         visit task_path(task_a)
       end
 
-      it_behaves_like 'ユーザーAが作成したワークアウトが表示される'
+      it_behaves_like 'ユーザーAが作成したトレーニングが表示される'
     end
   end
 
@@ -58,7 +58,7 @@ describe 'ワークアウト管理機能', type: :system do
     let(:login_user) { user_a }
 
     before do
-      # 新規ワークアウトを作成しておく
+      # 新規トレーニングを作成しておく
       visit new_task_path
       fill_in '種目', with: task_name
       click_button '登録する'
