@@ -28,7 +28,6 @@ table.table.table-hover
   thead.thead-default
     tr
       th= sort_link([:admin, @q], :name, [:name, "created_at desc"])
-      th= User.human_attribute_name(:name)
       th= User.human_attribute_name(:email)
       th= User.human_attribute_name(:admin)
       th= User.human_attribute_name(:created_at)
