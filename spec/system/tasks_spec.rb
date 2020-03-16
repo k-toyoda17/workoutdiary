@@ -15,9 +15,17 @@ describe 'トレーニング管理機能', type: :system do
     click_button 'ログインする' # ログインボタンを押下する
   end
 
-  # 作成済みのトレーニングの名称が画面上に表示されていることを確認
-  shared_examples_for '管理ユーザーが作成したトレーニングが表示される' do
+  shared_examples '管理ユーザーが作成したトレーニングが表示される' do
     it { expect(page).to have_content '管理ユーザーのトレーニング' }
+  end
+
+  shared_examples '新規トレーニングを作成する' do
+    before do
+      visit new_task_path
+      fill_in 'トレーニング名', with: task_name
+      fill_in 'task[activity_at]', with: task_activity_at
+      click_button '登録する'
+    end
   end
 
   describe '一覧表示機能' do
@@ -33,7 +41,6 @@ describe 'トレーニング管理機能', type: :system do
       let(:login_user) { genuser }
 
       it '管理ユーザーが作成したトレーニングが表示されない' do
-        # 管理ユーザーが作成したトレーニングの名称が画面上に表示されていないことを確認
         expect(page).to have_no_content '管理ユーザーのトレーニング'
       end
     end
@@ -54,16 +61,9 @@ describe 'トレーニング管理機能', type: :system do
   end
 
   describe '新規作成機能' do
-    # 管理ユーザーでログインする
     let(:login_user) { adminuser }
 
-    before do
-      # 新規トレーニングを作成しておく
-      visit new_task_path
-      fill_in 'トレーニング名', with: task_name
-      fill_in 'task[activity_at]', with: task_activity_at
-      click_button '登録する'
-    end
+    include_context '新規トレーニングを作成する'
 
     context '新規作成画面でトレーニング名を入力したとき' do
       let(:task_name) { '新規トレーニング' }
@@ -93,6 +93,24 @@ describe 'トレーニング管理機能', type: :system do
         within '#error_explanation' do
           expect(page).to have_content '実施日を入力してください'
         end
+      end
+    end
+  end
+
+  describe '編集機能' do
+    let(:login_user) { adminuser }
+
+    before do
+      visit edit_task_path(id: task_a.id)
+      fill_in 'トレーニング名', with: task_name
+      click_button '更新する'
+    end
+
+    context 'トレーニング名を編集したとき' do
+      let(:task_name) { '編集後トレーニング' }
+
+      it 'トレーニング名が正常に編集される' do
+        expect(page).to have_selector '.alert-success', text: '編集後トレーニング'
       end
     end
   end
