@@ -1,18 +1,15 @@
 require 'rails_helper'
 
 describe 'トレーニング管理機能', type: :system do
-  # 管理ユーザー,一般ユーザーを作成しておく
   let(:adminuser) { create(:user, name: '管理ユーザー', email: 'adminuser@example.com', admin: true) }
   let(:genuser) { create(:user, name: '一般ユーザー', email: 'genuser@example.com') }
-  # 作成者が管理ユーザーであるトレーニングを作成しておく
   let!(:task_a) { create(:task, name: '管理ユーザーのトレーニング', user: adminuser) }
 
   before do
-    # ログインの共通処理
-    visit login_path # ログイン画面にアクセスする
-    fill_in 'メールアドレス', with: login_user.email # メールアドレスを入力する
-    fill_in 'パスワード', with: login_user.password # パスワードを入力する
-    click_button 'ログインする' # ログインボタンを押下する
+    visit login_path
+    fill_in 'メールアドレス', with: login_user.email
+    fill_in 'パスワード', with: login_user.password
+    click_button 'ログインする'
   end
 
   shared_examples '管理ユーザーが作成したトレーニングが表示される' do
@@ -30,14 +27,12 @@ describe 'トレーニング管理機能', type: :system do
 
   describe '一覧表示機能' do
     context '管理ユーザーがログインしているとき' do
-      # 管理ユーザーでログインする
       let(:login_user) { adminuser }
 
       it_behaves_like '管理ユーザーが作成したトレーニングが表示される'
     end
 
     context 'ユーザーBがログインしているとき' do
-      # ユーザーBでログインする
       let(:login_user) { genuser }
 
       it '管理ユーザーが作成したトレーニングが表示されない' do
@@ -48,10 +43,8 @@ describe 'トレーニング管理機能', type: :system do
 
   describe '詳細表示機能' do
     context '管理ユーザーがログインしているとき' do
-      # 管理ユーザーでログインする
       let(:login_user) { adminuser }
 
-      # トレーニングの詳細ページへアクセスする
       before do
         visit task_path(task_a)
       end
@@ -103,15 +96,40 @@ describe 'トレーニング管理機能', type: :system do
     before do
       visit edit_task_path(id: task_a.id)
       fill_in 'トレーニング名', with: task_name
+      fill_in 'task[activity_at]', with: task_activity_at
       click_button '更新する'
     end
 
-    context 'トレーニング名を編集したとき' do
+    context 'トレーニング名のみを編集したとき' do
       let(:task_name) { '編集後トレーニング' }
+      let(:task_activity_at) { '' }
 
       it 'トレーニング名が正常に編集される' do
         expect(page).to have_selector '.alert-success', text: '編集後トレーニング'
       end
+    end
+
+    context '実施日を編集したとき' do
+      let(:task_name) { '編集後トレーニング' }
+      let(:task_activity_at) { '2020-03-31 20:00:00' }
+
+      it '実施日が正常に編集される' do
+        expect(page).to have_content '2020年03月31日(火) 20時00分'
+      end
+    end
+  end
+
+  describe '削除機能' do
+    let(:login_user) { adminuser }
+
+    it '削除できる' do
+      click_on '削除'
+
+      expect {
+        expect(page.driver.browser.switch_to.alert.text).to eq "トレーニング「管理ユーザーのトレーニング」を削除します。よろしいですか？"
+        page.driver.browser.switch_to.alert.accept
+        expect(page).to have_content 'トレーニング「管理ユーザーのトレーニング」を削除しました。残りのトレーニングは0件です。'
+      }.to change{ Task.count }.by(-1)
     end
   end
 end
