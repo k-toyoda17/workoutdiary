@@ -28,13 +28,17 @@ class Admin::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
-      if current_user&.admin? || current_user
-        redirect_to admin_user_path(@user), notice: "ユーザー「#{@user.name}」を登録しました。"
+    if current_user&.admin? && @user.save
+      redirect_to admin_user_path(@user), notice: "ユーザー「#{@user.name}」を登録しました。"
+    elsif current_user
+      if current_user&.admin?
+        render :new
       else
-        log_in @user
-        redirect_to root_path, notice: "ユーザー「#{@user.name}」を登録しました。"
+        redirect_to root_path, notice: '権限がありません。'
       end
+    elsif @user.save
+      log_in @user
+      redirect_to root_path, notice: "ユーザー「#{@user.name}」を登録しました。"
     else
       render :new
     end
