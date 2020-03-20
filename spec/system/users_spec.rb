@@ -24,16 +24,15 @@ describe 'ユーザー管理機能', type: :system do
     end
   end
 
-
   describe '一般ユーザー機能' do
-    context '新規登録機能' do
+    describe '新規登録機能' do
       include_context '新規登録'
       it '正常に登録される' do
         expect(page).to have_selector '.alert-success', text: '一般ユーザー'
       end
     end
 
-    context '詳細表示機能' do
+    describe '詳細表示機能' do
       let(:login_user) { genuser }
       include_context 'ログイン'
       before do
@@ -44,7 +43,7 @@ describe 'ユーザー管理機能', type: :system do
       end
     end
 
-    context '編集機能' do
+    describe '編集機能' do
       let(:login_user) { genuser }
       include_context 'ログイン'
       before do
@@ -60,7 +59,7 @@ describe 'ユーザー管理機能', type: :system do
       end
     end
 
-    context 'ログアウト機能' do
+    describe 'ログアウト機能' do
       let(:login_user) { genuser }
       include_context 'ログイン'
       before do
@@ -73,94 +72,87 @@ describe 'ユーザー管理機能', type: :system do
   end
 
   describe '管理ユーザー機能' do
-    context '管理ユーザーがログインしているとき' do
-      let(:login_user) { adminuser }
-    end
-
-    context 'ユーザーBがログインしているとき' do
-      let(:login_user) { genuser }
-
-      it '管理ユーザーが作成したユーザーが表示されない' do
-        expect(page).to have_no_content '管理ユーザーのユーザー'
-      end
-    end
-  end
-
-  describe '新規作成機能' do
     let(:login_user) { adminuser }
-
-    context '新規作成画面でユーザー名を入力したとき' do
-      let(:task_name) { '新規ユーザー' }
-      let(:task_activity_at) { '2020-01-01 00:00:00' }
-
+    include_context 'ログイン'
+    include_context '新規登録'
+    describe '新規登録機能' do
       it '正常に登録される' do
-        expect(page).to have_selector '.alert-success', text: '新規ユーザー'
+        expect(page).to have_selector '.alert-success', text: '一般ユーザー'
       end
     end
 
-    context '新規作成画面でユーザー名を入力しなかったとき' do
-      let(:task_name) { '' }
-      let(:task_activity_at) { '2020-01-01 00:00:00' }
+    describe 'ユーザー詳細機能' do
+      it '新規登録したユーザーの詳細が表示される' do
+        expect(page).to have_content 'ユーザーの詳細'
+        expect(page).to have_content 'genuser@example.com'
+      end
+    end
 
-      it 'エラーとなる' do
-        within '#error_explanation' do
-          expect(page).to have_content 'ユーザー名を入力してください'
+    describe 'ユーザー一覧表示機能' do
+      context '管理ユーザーの場合' do
+        before do
+          visit admin_users_path
+        end
+        it '新規登録したユーザーが一覧に表示される' do
+          expect(page).to have_content 'ユーザー一覧'
+          expect(page).to have_content 'genuser@example.com'
+        end
+      end
+
+      context '一般ユーザーの場合' do
+        before do
+          click_on 'ログアウト'
+        end
+        let(:loginuser) { create(:user, name: 'ログインユーザー', email: 'login@example.com') }
+        let(:login_user) { loginuser }
+        include_context 'ログイン'
+        it 'トレーニング一覧にリダイレクトされる' do
+          visit admin_users_path
+          expect(page).to have_selector '.alert-success', text: '権限がありません。'
         end
       end
     end
 
-    context '新規作成画面で実施日を入力しなかったとき' do
-      let(:task_name) { '新規ユーザー' }
-      let(:task_activity_at) { '' }
+    describe 'ユーザー編集機能' do
+      context '管理ユーザーを編集する場合' do
+        before do
+          visit edit_admin_user_path(id: adminuser.id)
+          fill_in '名前', with: '編集後管理ユーザー'
+          fill_in 'メールアドレス', with: 'revisedadminuser@example.com'
+          click_button '登録する'
+        end
+        it '管理ユーザーが正常に編集される' do
+          expect(page).to have_selector '.alert-success', text: '編集後管理ユーザー'
+          visit admin_user_path(adminuser)
+          expect(page).to have_content 'revisedadminuser@example.com'
+        end
 
-      it 'エラーとなる' do
-        within '#error_explanation' do
-          expect(page).to have_content '実施日を入力してください'
+        context '一般ユーザーを編集する場合' do
+          before do
+            visit admin_users_path
+            click_link '一般ユーザー'
+            click_on '編集'
+          end
+          it 'トレーニング一覧にリダイレクトされる' do
+            expect(page).to have_content 'トレーニング一覧'
+            expect(page).to have_selector '.alert-success', text: '権限がありません。'
+          end
         end
       end
     end
-  end
 
-  describe '編集機能' do
-    let(:login_user) { adminuser }
-
-    before do
-      visit edit_task_path(id: task_a.id)
-      fill_in 'ユーザー名', with: task_name
-      fill_in 'task[activity_at]', with: task_activity_at
-      click_button '更新する'
-    end
-
-    context 'ユーザー名のみを編集したとき' do
-      let(:task_name) { '編集後ユーザー' }
-      let(:task_activity_at) { '' }
-
-      it 'ユーザー名が正常に編集される' do
-        expect(page).to have_selector '.alert-success', text: '編集後ユーザー'
+    describe 'ユーザー削除機能' do
+      before do
+        visit admin_users_path
       end
-    end
-
-    context '実施日を編集したとき' do
-      let(:task_name) { '編集後ユーザー' }
-      let(:task_activity_at) { '2020-03-31 20:00:00' }
-
-      it '実施日が正常に編集される' do
-        expect(page).to have_content '2020年03月31日(火) 20時00分'
+      it '一般ユーザーが正常に削除される' do
+        click_on '削除'
+        expect {
+          expect(page.driver.browser.switch_to.alert.text).to eq "ユーザー「一般ユーザー」を削除します。よろしいですか？"
+          page.driver.browser.switch_to.alert.accept
+          expect(page).to have_selector '.alert-success', text: '一般ユーザー'
+        }.to change{ User.count }.by(-1)
       end
-    end
-  end
-
-  describe '削除機能' do
-    let(:login_user) { adminuser }
-
-    it '削除できる' do
-      click_on '削除'
-
-      expect {
-        expect(page.driver.browser.switch_to.alert.text).to eq "ユーザー「管理ユーザーのユーザー」を削除します。よろしいですか？"
-        page.driver.browser.switch_to.alert.accept
-        expect(page).to have_content 'ユーザー「管理ユーザーのユーザー」を削除しました。残りのユーザーは0件です。'
-      }.to change{ Task.count }.by(-1)
     end
   end
 end

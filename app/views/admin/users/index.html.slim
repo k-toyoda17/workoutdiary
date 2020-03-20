@@ -39,8 +39,8 @@ table.table.table-hover
         td= link_to user.name, [:admin, user]
         td= user.email
         td= user.admin? ? 'あり' : 'なし'
-        td= user.created_at
-        td= user.updated_at
+        td= l user.created_at
+        td= l user.updated_at
         - if current_user.admin? && !current_user?(user)
           td
             = link_to '削除', [:admin, user], method: :delete, data: { confirm: "ユーザー「#{user.name}」を削除します。よろしいですか？" }, class: 'btn btn-danger'
