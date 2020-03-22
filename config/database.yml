@@ -83,3 +83,6 @@ production:
   database: workout-diary_production
   username: workout-diary
   password: <%= ENV['WORKOUT-DIARY_DATABASE_PASSWORD'] %>
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
