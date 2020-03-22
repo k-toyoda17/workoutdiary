@@ -32,6 +32,6 @@ h1 ワークアウトの新規登録
     = f.label :description
     = f.text_area :description, rows: 5, class: 'form-control', id: 'task_description'
   .form-group
-    = f.label :image
+    = f.label :image, accept: "image/png, image/jpeg, image/gif"
     = f.file_field :image, class: 'form-control'
   = f.submit nil, class: 'btn btn-primary'

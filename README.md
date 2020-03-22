@@ -1,24 +1,20 @@
-# README
+## 概要
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[WorkoutDiary](https://workoutdiary-toyoda17.herokuapp.com/)は日々の筋トレ記録管理ができるサービスです
 
-Things you may want to cover:
+## 機能一覧
 
-* Ruby version
+- ユーザー管理機能
+  - 一般ユーザー(新規登録/編集)
+  - 管理ユーザー(新規登録/編集/削除/CSV出力・登録)
+- 筋トレ記録管理機能(新規登録/編集/削除/画像保存)
+- カレンダー機能(fullcalender)
+- 検索機能(ransack)
+- ソート機能(kaminari)
 
-* System dependencies
+## 開発環境・使用技術
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Rails
+- Rspec 
+- Heroku
+- Amazon S3（筋トレ記録画像保存先）
