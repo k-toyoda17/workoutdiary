@@ -18,7 +18,7 @@ table.table.table-hover
       td= auto_link(simple_format(h(@task.description), {}, sanitize: false, wrapper_tag: "div"))
     tr
       th= Task.human_attribute_name(:image)
-      td= image_tag @task.image if @task.image.attached?
+      td= image_tag @task.image.variant(resize:'400x400').processed if @task.image.attached?
 
 - if current_user&.admin? || current_user
   = link_to '編集', edit_task_path, class: 'btn btn-primary mr-3'

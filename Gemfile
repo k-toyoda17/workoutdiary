@@ -75,3 +75,4 @@ gem "bootstrap4-datetime-picker-rails"
 gem "font-awesome-rails"
 gem "aws-sdk-s3", require: false
 gem 'faker'
+gem 'mini_magick'
