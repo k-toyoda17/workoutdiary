@@ -89,19 +89,11 @@ describe 'トレーニング管理機能', type: :system do
       fill_in 'task[activity_at]', with: task_activity_at
       click_button '更新する'
     end
-    context 'トレーニング名のみを編集したとき' do
-      let(:task_name) { '編集後トレーニング' }
-      let(:task_activity_at) { '' }
-      it 'トレーニング名が正常に編集される' do
-        expect(page).to have_selector '.alert-success', text: '編集後トレーニング'
-      end
-    end
-
-    context '実施日を編集したとき' do
+    context 'トレーニング名と実施日を編集したとき' do
       let(:task_name) { '編集後トレーニング' }
       let(:task_activity_at) { '2020-03-31 20:00:00' }
-      it '実施日が正常に編集される' do
-        expect(page).to have_content '2020年03月31日(火) 20時00分'
+      it '正常に編集される' do
+        expect(page).to have_selector '.alert-success', text: '編集後トレーニング'
       end
     end
   end
